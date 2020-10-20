@@ -68,6 +68,7 @@ where
 mod tests {
     use super::sort;
     use super::sort_by;
+    use crate::utils::{is_sorted_ascending, is_sorted_desceinding, new_u32_vec};
     use crate::SortOrder::*;
 
     #[derive(Debug, PartialEq)]
@@ -200,5 +201,19 @@ mod tests {
         let expected = vec![&ryosuke, &kyoko, &hanako, &taro];
         assert_eq!(sort_by(&mut x, &comp), Ok(()));
         assert_eq!(x, expected);
+    }
+
+    #[test]
+    fn sort_u32_large() {
+        {
+            let mut x = new_u32_vec(65536);
+            assert_eq!(sort(&mut x, &Ascending), Ok(()));
+            assert!(is_sorted_ascending(&x));
+        }
+        {
+            let mut x = new_u32_vec(65536);
+            assert_eq!(sort(&mut x, &Descending), Ok(()));
+            assert!(is_sorted_desceinding(&x));
+        }
     }
 }
