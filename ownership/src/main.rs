@@ -102,9 +102,25 @@ fn copy_semantics_example() {
     println!("p1: {:?}", p1);
 }
 
+fn borrowing_ref_example() {
+    println!("");
+    println!("*** borrowing_ref_example ***");
+    let mut p1 = Parent(1, Child(11), Child(12));
+
+    func3(&mut p1); // この時点で、他にp1の借用はなく、この引数の可変借用も呼び出しとともに返されるので問題ない
+
+    let c = &p1.1;
+    // こっちはだめ
+    // すでに
+    // p1の要素に共用参照cがある状態で、且つcの借用がまだ有効なため、新たに可変借用を得ることができずにコンパイルエラーになる
+    // func3(&mut p1);
+    println!("{:?}", c);
+}
+
 fn main() {
     value_scope_example();
     move_semantics_example();
     copy_semantics_example();
     move_semantics_example_fn();
+    borrowing_ref_example();
 }
