@@ -9,6 +9,23 @@ mod tests {
         let e = v.get(0);
         assert_eq!(e, Some(&"Java Finch".to_string()));
     }
+
+    #[test]
+    fn iter() {
+        let mut v = ToyVec::<String>::new();
+        v.push("Java Finch".to_string());
+        v.push("Budgerigar".to_string());
+
+        let mut iter = v.iter();
+        assert_eq!(iter.next(), Some(&"Java Finch".to_string()));
+        assert_eq!(iter.next(), Some(&"Budgerigar".to_string()));
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.next(), None);
+
+        for (i, s) in v.iter().enumerate() {
+            assert_eq!(s, v.get(i).unwrap());
+        }
+    }
 }
 
 pub struct ToyVec<T> {
@@ -96,6 +113,33 @@ impl<T: Default> ToyVec<T> {
             for (i, e) in old_elements.into_vec().into_iter().enumerate() {
                 self.elements[i] = e;
             }
+        }
+    }
+
+    pub fn iter<'vec>(&'vec self) -> Iter<'vec, T> {
+        Iter {
+            elements: &self.elements,
+            len: self.len,
+            pos: 0,
+        }
+    }
+}
+
+pub struct Iter<'vec, T> {
+    elements: &'vec Box<[T]>,
+    len: usize,
+    pos: usize,
+}
+
+impl <'vec, T> Iterator for Iter<'vec, T> {
+    type Item = &'vec T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.pos == self.len {
+            None
+        } else {
+            self.pos += 1;
+            Some(&self.elements[self.pos - 1])
         }
     }
 }
